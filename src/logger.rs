@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use colored::*;
 
 /// Enum representing the log levels

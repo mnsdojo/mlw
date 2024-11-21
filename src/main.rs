@@ -18,7 +18,7 @@ mod watcher;
 
 #[derive(Deserialize, Clone, Debug)]
 struct ConfigFile {
-    path: String,
+    path: Vec<String>,
     delay: u64,
     verbose: Option<bool>,
     ignore_pattern: Option<String>,
@@ -59,26 +59,29 @@ impl ScriptProcess {
 
         // Build the command
         //
-        let args = match config.script_type.as_deref() {
-            Some("go") => vec!["run", config.path.as_str()], // Convert &String to &str
-            _ => vec![config.path.as_str()],                 // Convert &String to &str
-        };
-        let child = Command::new(command)
-            .args(&args)
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .spawn()
-            .context("Failed to start script")?;
-
-        self.child = Some(child);
+        for path in &config.path {
+            let args = match config.script_type.as_deref() {
+                Some("go") => vec!["run", path.as_str()], // Convert &String to &str
+                _ => vec![path.as_str()],                 // Convert &String to &str
+            };
+            let child = Command::new(command)
+                .args(&args)
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .spawn()
+                .context("Failed to start script")?;
+    
+            self.child = Some(child);
+        }
         Ok(())
     }
 }
 fn load_config(file_path: &Path) -> Result<ConfigFile> {
     let config_str = fs::read_to_string(file_path).context("Failed to read config file")?;
     let config: ConfigFile = toml::from_str(&config_str).context("Failed to parse config file")?;
-    if !Path::new(&config.path).exists() {
-        anyhow::bail!("Specified path does not exist: {}", config.path);
+    // Check if any paths exist
+    if config.path.is_empty() || !config.path.iter().all(|p| Path::new(p).exists()) {
+        anyhow::bail!("One or more specified paths do not exist");
     }
 
     Ok(config)
@@ -115,13 +118,17 @@ fn main() -> Result<()> {
 
     let (tx, rx) = channel();
     let mut file_watcher = FileWatcher::new(tx)?;
-    file_watcher.watch(Path::new(&config.path))?;
+    for path in &config.path {
+        file_watcher.watch(Path::new(path))?;
+    }
 
     let mut python_process = ScriptProcess::new();
     python_process.restart(&config)?;
 
     if config.verbose.unwrap_or(false) {
-        log(LogLevel::Info, &format!("Watching path: {}", config.path));
+        for path in &config.path {
+            log(LogLevel::Info, &format!("Watching path: {}", path));
+        }
     }
     let last_event_time = Arc::new(Mutex::new(Instant::now()));
     loop {

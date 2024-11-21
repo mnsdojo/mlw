@@ -65,7 +65,6 @@ impl PythonProcess {
         Ok(())
     }
 }
-
 fn load_config(file_path: &Path) -> Result<ConfigFile> {
     let config_str = fs::read_to_string(file_path).context("Failed to read config file")?;
     let config: ConfigFile = toml::from_str(&config_str).context("Failed to parse config file")?;
@@ -75,7 +74,6 @@ fn load_config(file_path: &Path) -> Result<ConfigFile> {
 
     Ok(config)
 }
-
 fn handle_change(config: &ConfigFile, python_process: &mut PythonProcess) -> Result<()> {
     verbose_log(
         LogLevel::Info,
@@ -102,7 +100,6 @@ fn should_ignore_path(path: &Path, ignore_pattern: Option<&str>) -> bool {
 fn main() -> Result<()> {
     let config = load_config(Path::new("pew.toml"))?;
 
-    // Conditional logging based on verbosity setting
     if config.verbose.unwrap_or(false) {
         log(LogLevel::Info, "Configuration loaded.");
     }

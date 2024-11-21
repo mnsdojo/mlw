@@ -1,5 +1,5 @@
 # pew.toml
-path = "./examples"
+path = "./examples/script.py"
 delay = 3
 logger_level = "info"
 ignore_pattern = ".*\\.tmp$|.*\\.log$"

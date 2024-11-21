@@ -1,12 +1,13 @@
-# PEW (Python Easy Watcher)
+# MWL (Multi-Language Watcher)
 
-PEW is a simple command-line tool that watches Python files for changes and automatically restarts them.
+MWL is a flexible command-line tool that monitors files for changes and automatically restarts scripts, regardless of the language. It is highly customizable and supports multiple file types and configurations.
 
 ## Features
 
-- **Automatic Python Script Restart**: Automatically restarts your Python script when any watched file changes.
-- **Configurable**: Easily customizable via a `pew.toml` configuration file.
-- **File Watcher**: Watches for file changes in specific directories and with specific extensions (e.g., `.py`).
+- **Automatic Script Restart**: Automatically restarts your script when any watched file changes.
+- **Multi-Language Support**: Supports various programming languages (e.g., Python, JavaScript, Go, etc.) by recognizing file extensions.
+- **Configurable**: Easily customizable via an `mwl.toml` configuration file.
+- **File Watcher**: Watches for file changes in specific directories and for specified file extensions.
 - **Customizable Watch Interval**: Adjust the interval at which files are checked for changes.
-- **Logging**: Output detailed logs based on the specified logging level.
-# pew
+- **Logging**: Outputs detailed logs based on the specified logging level.
+

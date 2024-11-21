@@ -22,14 +22,15 @@ struct ConfigFile {
     delay: u64,
     verbose: Option<bool>,
     ignore_pattern: Option<String>,
+    script_type: Option<String>,
     python_interpreter: Option<String>,
 }
 
-struct PythonProcess {
+struct ScriptProcess {
     child: Option<Child>,
 }
 
-impl PythonProcess {
+impl ScriptProcess {
     fn new() -> Self {
         Self { child: None }
     }
@@ -43,23 +44,32 @@ impl PythonProcess {
 
     fn restart(&mut self, config: &ConfigFile) -> Result<()> {
         self.stop();
-        let interpreter = config.python_interpreter.as_deref().unwrap_or("python3");
+        // Determine command based on script type
+        let command = match config.script_type.as_deref() {
+            Some("python") => config.python_interpreter.as_deref().unwrap_or("python3"),
+            Some("node") => "node",
+            Some("go") => "go",
+            _ => anyhow::bail!("Unsupported or missing script type"),
+        };
 
         verbose_log(
             LogLevel::Info,
-            &format!(
-                "Restarting Python script using interpreter: {}",
-                interpreter
-            ),
+            &format!("Restarting script using: {}", command),
             config.verbose,
         );
 
-        let child = Command::new(interpreter)
-            .arg(&config.path)
+        // Build the command
+        //
+        let args = match config.script_type.as_deref() {
+            Some("go") => vec!["run", config.path.as_str()], // Convert &String to &str
+            _ => vec![config.path.as_str()],                 // Convert &String to &str
+        };
+        let child = Command::new(command)
+            .args(&args)
             .stdout(Stdio::inherit())
             .stderr(Stdio::inherit())
             .spawn()
-            .context("Failed to start Python script")?;
+            .context("Failed to start script")?;
 
         self.child = Some(child);
         Ok(())
@@ -74,7 +84,7 @@ fn load_config(file_path: &Path) -> Result<ConfigFile> {
 
     Ok(config)
 }
-fn handle_change(config: &ConfigFile, python_process: &mut PythonProcess) -> Result<()> {
+fn handle_change(config: &ConfigFile, python_process: &mut ScriptProcess) -> Result<()> {
     verbose_log(
         LogLevel::Info,
         "File change detected. Restarting...",
@@ -108,7 +118,7 @@ fn main() -> Result<()> {
     let mut file_watcher = FileWatcher::new(tx)?;
     file_watcher.watch(Path::new(&config.path))?;
 
-    let mut python_process = PythonProcess::new();
+    let mut python_process = ScriptProcess::new();
     python_process.restart(&config)?;
 
     if config.verbose.unwrap_or(false) {

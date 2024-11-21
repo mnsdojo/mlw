@@ -198,6 +198,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "mlw"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "colored",
+ "notify",
+ "regex",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
 name = "notify"
 version = "7.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -223,19 +236,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7393c226621f817964ffb3dc5704f9509e107a8b024b489cc2c1b217378785df"
 dependencies = [
  "instant",
-]
-
-[[package]]
-name = "pew"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "colored",
- "notify",
- "regex",
- "serde",
- "serde_json",
- "toml",
 ]
 
 [[package]]

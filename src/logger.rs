@@ -8,6 +8,19 @@ pub enum LogLevel {
     Debug,
 }
 
+pub fn verbose_log(level: LogLevel, message: &str, verbose: Option<bool>) {
+    match verbose {
+        Some(true) => {
+            log(level, message);
+        }
+        _ => {
+            match level {
+                LogLevel::Info | LogLevel::Error => log(level, message),
+                _ => {} // Skip Debug level logs if not verbose
+            }
+        }
+    }
+}
 /// Logs messages to the console
 pub fn log(level: LogLevel, message: &str) {
     match level {

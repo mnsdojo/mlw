@@ -4,5 +4,5 @@ delay = 3
 logger_level = "info"
 ignore_pattern = ".*\\.tmp$|.*\\.log$"
 verbose = false
-script_type = "node"
+script_type = "go"
 #

@@ -23,7 +23,6 @@ struct ConfigFile {
     verbose: Option<bool>,
     ignore_pattern: Option<String>,
     script_type: Option<String>,
-    python_interpreter: Option<String>,
 }
 
 struct ScriptProcess {
@@ -46,7 +45,7 @@ impl ScriptProcess {
         self.stop();
         // Determine command based on script type
         let command = match config.script_type.as_deref() {
-            Some("python") => config.python_interpreter.as_deref().unwrap_or("python3"),
+            Some("python") => "python3",
             Some("node") => "node",
             Some("go") => "go",
             _ => anyhow::bail!("Unsupported or missing script type"),

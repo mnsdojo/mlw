@@ -70,7 +70,7 @@ impl ScriptProcess {
                 .stderr(Stdio::inherit())
                 .spawn()
                 .context("Failed to start script")?;
-    
+
             self.child = Some(child);
         }
         Ok(())
@@ -110,7 +110,7 @@ fn should_ignore_path(path: &Path, ignore_pattern: Option<&str>) -> bool {
 }
 
 fn main() -> Result<()> {
-    let config = load_config(Path::new("pew.toml"))?;
+    let config = load_config(Path::new("mlw.toml"))?;
 
     if config.verbose.unwrap_or(false) {
         log(LogLevel::Info, "Configuration loaded.");

@@ -2,6 +2,7 @@
 name = "mlw"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 description = "A file watcher that runs scripts on changes"
 repository = "github.com/mnsdojo/mlw"
 

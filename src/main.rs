@@ -181,8 +181,8 @@ fn main() -> Result<()> {
         file_watcher.watch(Path::new(path))?;
     }
 
-    let mut python_process = ScriptProcess::new();
-    python_process.restart(&config)?;
+    let mut script_process = ScriptProcess::new();
+    script_process.restart(&config)?;
 
     if config.verbose.unwrap_or(false) {
         for path in &config.path {
@@ -213,7 +213,7 @@ fn main() -> Result<()> {
                         {
                             *last_event_time = now; // Update the last event time
 
-                            if let Err(e) = handle_change(&config, &mut python_process) {
+                            if let Err(e) = handle_change(&config, &mut script_process) {
                                 log(LogLevel::Error, &format!("Error handling change: {}", e));
                             }
                         } else if config.verbose.unwrap_or(false) {

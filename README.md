@@ -1,6 +1,6 @@
-# MWL (Multi-Language Watcher)
+# MLW (Multi-Language Watcher)
 
-MWL is a flexible command-line tool that monitors files for changes and automatically restarts scripts, regardless of the language. It is highly customizable and supports multiple file types and configurations.
+MLW is a flexible command-line tool that monitors files for changes and automatically restarts scripts, regardless of the language. It is highly customizable and supports multiple file types and configurations.
 
 ## Features
 

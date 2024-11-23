@@ -13,9 +13,21 @@ use regex::Regex;
 use serde::Deserialize;
 use watcher::FileWatcher;
 
+use clap::Parser;
 mod logger;
 mod watcher;
-
+#[derive(Parser, Debug)]
+#[command(
+    name = "mlw",
+    about = "A file watcher for multi languages",
+    version,
+    author
+)]
+struct Cli {
+    /// Path to config file
+    #[arg(short, long, default_value = "mlw.toml")]
+    config: String,
+}
 #[derive(Deserialize, Clone, Debug)]
 struct ConfigFile {
     path: Vec<String>,
@@ -110,7 +122,8 @@ fn should_ignore_path(path: &Path, ignore_pattern: Option<&str>) -> bool {
 }
 
 fn main() -> Result<()> {
-    let config = load_config(Path::new("mlw.toml"))?;
+    let cli = Cli::parse();
+    let config = load_config(Path::new(&cli.config))?;
 
     if config.verbose.unwrap_or(false) {
         log(LogLevel::Info, "Configuration loaded.");

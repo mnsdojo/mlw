@@ -135,7 +135,7 @@ fn handle_change(config: &ConfigFile, python_process: &mut ScriptProcess) -> Res
     python_process.restart(config)?;
     verbose_log(
         LogLevel::Info,
-        "Python script restarted successfully.",
+        "script restarted successfully.",
         config.verbose,
     );
     Ok(())

@@ -3,7 +3,7 @@ name = "mlw"
 version = "0.1.0"
 edition = "2021"
 description = "A file watcher that runs scripts on changes"
-
+repository = "github.com/mnsdojo/mlw"
 
 [dependencies]
 colored = "2.1.0"

@@ -60,7 +60,8 @@ impl ScriptProcess {
             Some("python") => "python3",
             Some("node") => "node",
             Some("go") => "go",
-            _ => anyhow::bail!("Unsupported or missing script type"),
+            Some(unknown) => anyhow::bail!("Unsupported script type: {}", unknown),
+            None => anyhow::bail!("Missing script type in config"),
         };
 
         verbose_log(
@@ -95,6 +96,7 @@ fn load_config(file_path: &Path) -> Result<ConfigFile> {
     if config.path.is_empty() || !config.path.iter().all(|p| Path::new(p).exists()) {
         anyhow::bail!("One or more specified paths do not exist");
     }
+    
 
     Ok(config)
 }

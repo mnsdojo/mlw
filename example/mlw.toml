@@ -1,5 +1,5 @@
 # pew.toml
-path = ["./example"]
+path = ["./src"]
 delay = 3
 logger_level = "info"
 ignore_pattern = ".*\\.tmp$|.*\\.log$"

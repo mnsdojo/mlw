@@ -11,3 +11,18 @@ MLW is a flexible command-line tool that monitors files for changes and automati
 - **Customizable Watch Interval**: Adjust the interval at which files are checked for changes.
 - **Logging**: Outputs detailed logs based on the specified logging level.
 
+## Installation
+
+You can install MLW using your package manager or by downloading it directly from the release page.
+
+## Basic Usage
+
+### 1. Generate Configuration
+
+To generate the default configuration file for MLW, run the following command:
+
+```bash
+mlw --gen-config
+
+```
+

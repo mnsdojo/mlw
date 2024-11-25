@@ -125,14 +125,14 @@ fn load_config(file_path: &Path) -> Result<ConfigFile> {
     Ok(config)
 }
 
-fn handle_change(config: &ConfigFile, python_process: &mut ScriptProcess) -> Result<()> {
+fn handle_change(config: &ConfigFile, script_process: &mut ScriptProcess) -> Result<()> {
     verbose_log(
         LogLevel::Info,
         "File change detected. Restarting...",
         config.verbose,
     );
     std::thread::sleep(Duration::from_secs(config.delay));
-    python_process.restart(config)?;
+    script_process.restart(config)?;
     verbose_log(
         LogLevel::Info,
         "script restarted successfully.",

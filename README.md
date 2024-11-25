@@ -5,7 +5,7 @@ MLW is a flexible command-line tool that monitors files for changes and automati
 ## Features
 
 - **Automatic Script Restart**: Automatically restarts your script when any watched file changes.
-- **Multi-Language Support**: Supports various programming languages (e.g., Python, JavaScript, Go, etc.) by recognizing file extensions.
+- **Multi-Language Support**: Supports various programming languages (e.g., Python, JavaScript, Go, C,etc.) by recognizing file extensions.
 - **Configurable**: Easily customizable via an `mwl.toml` configuration file.
 - **File Watcher**: Watches for file changes in specific directories and for specified file extensions.
 - **Customizable Watch Interval**: Adjust the interval at which files are checked for changes.
@@ -25,4 +25,3 @@ To generate the default configuration file for MLW, run the following command:
 mlw --gen-config
 
 ```
-

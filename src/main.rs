@@ -37,6 +37,7 @@ struct Cli {
 #[derive(Deserialize, Clone, Debug)]
 struct ConfigFile {
     path: Vec<String>,
+    script_args: Option<Vec<String>>, // Added to support additional arguments
     delay: u64,
     verbose: Option<bool>,
     ignore_pattern: Option<String>,
@@ -63,6 +64,10 @@ ignore_pattern = ".*\\.git.*"
 
 # Type of script to run (e.g. python, node, go)
 script_type = "node"
+
+
+# Additional arguments for the script (optional)
+# script_args = ["--dev", "--watch"]
 "#;
 
 impl ScriptProcess {
@@ -77,16 +82,35 @@ impl ScriptProcess {
         }
     }
 
+    fn get_command_config(script_type: &str) -> Result<(&'static str, Vec<&'static str>)> {
+        match script_type {
+            // Interpreted languages
+            "python" => Ok(("python3", vec![])),
+            "python2" => Ok(("python2", vec![])),
+            "node" => Ok(("node", vec![])),
+            "lua" => Ok(("lua", vec![])),
+            "php" => Ok(("php", vec![])),
+
+            // Compiled languages
+            "go" => Ok(("go", vec!["run"])),
+            "rust" => Ok(("cargo", vec!["run", "--"])),
+
+            // shell
+            "sh" => Ok(("sh", vec![])),
+
+            unknown => anyhow::bail!("Unsupported script type: {}", unknown),
+        }
+    }
+
     fn restart(&mut self, config: &ConfigFile) -> Result<()> {
         self.stop();
-        // Determine command based on script type
-        let command = match config.script_type.as_deref() {
-            Some("python") => "python3",
-            Some("node") => "node",
-            Some("go") => "go",
-            Some(unknown) => anyhow::bail!("Unsupported script type: {}", unknown),
-            None => anyhow::bail!("Missing script type in config"),
-        };
+
+        let script_type = config
+            .script_type
+            .as_deref()
+            .ok_or_else(|| anyhow::anyhow!("Missing script type in config"))?;
+
+        let (command, default_args) = Self::get_command_config(script_type)?;
 
         verbose_log(
             LogLevel::Info,
@@ -94,18 +118,28 @@ impl ScriptProcess {
             config.verbose,
         );
 
-        // Build the command
         for path in &config.path {
-            let args = match config.script_type.as_deref() {
-                Some("go") => vec!["run", path.as_str()], // Convert &String to &str
-                _ => vec![path.as_str()],                 // Convert &String to &str
-            };
+            // Combine default arguments with user-provided arguments
+            let mut args = default_args.to_vec();
+            args.push(path.as_str());
+
+            // Add any additional arguments from config
+            if let Some(extra_args) = &config.script_args {
+                args.extend(extra_args.iter().map(String::as_str));
+            }
+
+            verbose_log(
+                LogLevel::Debug,
+                &format!("Running command: {} with args: {:?}", command, args),
+                config.verbose,
+            );
+
             let child = Command::new(command)
                 .args(&args)
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
                 .spawn()
-                .context("Failed to start script")?;
+                .with_context(|| format!("Failed to start {} script", script_type))?;
 
             self.child = Some(child);
         }
